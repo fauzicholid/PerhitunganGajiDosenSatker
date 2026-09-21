@@ -53,6 +53,7 @@ body {
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 20px;
+  min-width: 0;
 }
 
 .card h2 {
@@ -221,6 +222,32 @@ button.secondary {
   color: var(--muted);
   font-size: 0.8rem;
   text-align: center;
+}
+
+@media (max-width: 480px) {
+  .page {
+    padding: 16px 12px 32px;
+  }
+
+  .card {
+    padding: 16px;
+  }
+
+  .header h1 {
+    font-size: 1.3rem;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .actions button {
+    width: 100%;
+  }
+
+  .result-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
