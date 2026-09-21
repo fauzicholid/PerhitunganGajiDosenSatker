@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Perhitungan Gaji Dosen BLU Satker</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="header">
+      <h1>Perhitungan Gaji Dosen BLU Satker</h1>
+      <p class="subtitle">
+        Gaji Pokok (sesuai golongan &amp; pangkat PP No. 5 Tahun 2024) + Tunjangan Kinerja (Tukin)
+        &mdash; tanpa remunerasi BLU dan tanpa tunjangan satker.
+      </p>
+    </header>
+
+    <main class="layout">
+      <section class="card">
+        <h2>Data Dosen</h2>
+        <form id="gajiForm" autocomplete="off">
+          <div class="field">
+            <label for="nama">Nama</label>
+            <input type="text" id="nama" name="nama" placeholder="Nama lengkap dosen" required />
+          </div>
+
+          <div class="field">
+            <label for="nip">NIP</label>
+            <input
+              type="text"
+              id="nip"
+              name="nip"
+              placeholder="18 digit, contoh: 198501012010121001"
+              pattern="\d{18}"
+              maxlength="18"
+              inputmode="numeric"
+              title="NIP terdiri dari 18 digit angka"
+              required
+            />
+          </div>
+
+          <div class="field">
+            <label for="masaKerja">Masa Kerja Golongan (tahun)</label>
+            <input
+              type="number"
+              id="masaKerja"
+              name="masaKerja"
+              min="0"
+              max="32"
+              step="1"
+              placeholder="0 - 32"
+              required
+            />
+            <small>Dibulatkan ke bawah ke periode kenaikan gaji berkala (2 tahunan), maksimal 32 tahun.</small>
+          </div>
+
+          <div class="field">
+            <label for="golongan">Golongan / Ruang</label>
+            <select id="golongan" name="golongan" required></select>
+          </div>
+
+          <div class="field">
+            <label for="pangkat">Pangkat</label>
+            <input type="text" id="pangkat" name="pangkat" readonly />
+            <small>Terisi otomatis sesuai golongan/ruang yang dipilih.</small>
+          </div>
+
+          <div class="field">
+            <label for="jabfung">Jabatan Fungsional</label>
+            <select id="jabfung" name="jabfung" required></select>
+            <small>Menentukan kelas jabatan &amp; nominal tukin acuan (Perpres No. 19 Tahun 2025).</small>
+          </div>
+
+          <div class="field">
+            <label for="tukin">Tunjangan Kinerja (Tukin)</label>
+            <input
+              type="text"
+              id="tukin"
+              name="tukin"
+              inputmode="numeric"
+              placeholder="Contoh: 5000000"
+              required
+            />
+            <small>
+              Terisi otomatis sesuai jabatan fungsional, dapat disesuaikan manual mengikuti SK
+              penetapan tukin (mis. dikurangi tunjangan profesi yang sudah diterima).
+            </small>
+          </div>
+
+          <div class="actions">
+            <button type="submit">Hitung Gaji</button>
+            <button type="reset" class="secondary">Bersihkan</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="card result" id="resultCard" hidden>
+        <h2>Hasil Perhitungan</h2>
+        <dl class="result-grid">
+          <div><dt>Nama</dt><dd id="rNama"></dd></div>
+          <div><dt>NIP</dt><dd id="rNip"></dd></div>
+          <div><dt>Golongan / Ruang</dt><dd id="rGolongan"></dd></div>
+          <div><dt>Pangkat</dt><dd id="rPangkat"></dd></div>
+          <div><dt>Masa Kerja Golongan</dt><dd id="rMasaKerja"></dd></div>
+          <div><dt>Jabatan Fungsional</dt><dd id="rJabfung"></dd></div>
+          <div><dt>Kelas Jabatan</dt><dd id="rKelasJabatan"></dd></div>
+        </dl>
+        <table class="breakdown">
+          <tbody>
+            <tr>
+              <td>Gaji Pokok</td>
+              <td class="amount" id="rGajiPokok"></td>
+            </tr>
+            <tr>
+              <td>Tunjangan Kinerja (Tukin)</td>
+              <td class="amount" id="rTukin"></td>
+            </tr>
+            <tr class="total">
+              <td>Total Gaji (tanpa remun &amp; tanpa satker)</td>
+              <td class="amount" id="rTotal"></td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="note">
+          Total ini hanya terdiri atas gaji pokok PNS dan tukin. Tidak termasuk remunerasi BLU,
+          tunjangan satker, tunjangan keluarga, tunjangan pangan, maupun potongan (pajak, iuran,
+          dsb). Untuk dosen bersertifikasi, Perpres No. 19 Tahun 2025 mengatur tukin yang
+          dibayarkan adalah selisih terhadap tunjangan profesi yang sudah diterima — sesuaikan
+          nominal tukin di atas bila berlaku.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Tabel Referensi Tukin Dosen per Jabatan Fungsional</h2>
+        <div class="table-wrap">
+          <table class="ref-table" id="refTukinTable"></table>
+        </div>
+        <p class="note">
+          Sumber: Perpres No. 19 Tahun 2025 tentang Tunjangan Kinerja Dosen ASN (berlaku untuk
+          dosen ASN di PTN Satker dan PTN BLU yang belum menerapkan remunerasi) dan
+          Kepmendiktisaintek No. 447/P/2024 tentang kelas jabatan &amp; besaran tukin jabatan
+          fungsional dosen.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Tabel Referensi Gaji Pokok (PP No. 5 Tahun 2024)</h2>
+        <div class="table-wrap">
+          <table class="ref-table" id="refTable"></table>
+        </div>
+        <p class="note">
+          Nilai pada MKG 0 dan MKG 32 diambil langsung dari lampiran resmi PP No. 5 Tahun 2024.
+          Nilai MKG 2&ndash;30 dihitung dengan pola kenaikan berkala antar-golongan pada peraturan
+          tersebut (kecuali golongan III/b yang dicantumkan penuh dari sumber resmi). Selalu
+          cocokkan kembali dengan lampiran resmi sebelum digunakan untuk pembayaran.
+        </p>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>
+        Dasar: PP No. 5 Tahun 2024 (perubahan ke-19 PP No. 7 Tahun 1977 tentang Gaji PNS).
+        Aplikasi ini adalah alat bantu simulasi, bukan dokumen resmi penggajian.
+      </p>
+    </footer>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
