@@ -67,6 +67,12 @@
           </div>
 
           <div class="field">
+            <label for="jabfung">Jabatan Fungsional</label>
+            <select id="jabfung" name="jabfung" required></select>
+            <small>Menentukan kelas jabatan &amp; nominal tukin acuan (Perpres No. 19 Tahun 2025).</small>
+          </div>
+
+          <div class="field">
             <label for="tukin">Tunjangan Kinerja (Tukin)</label>
             <input
               type="text"
@@ -76,7 +82,10 @@
               placeholder="Contoh: 5000000"
               required
             />
-            <small>Nominal tukin sesuai SK/kelas jabatan masing-masing dosen (diisi manual).</small>
+            <small>
+              Terisi otomatis sesuai jabatan fungsional, dapat disesuaikan manual mengikuti SK
+              penetapan tukin (mis. dikurangi tunjangan profesi yang sudah diterima).
+            </small>
           </div>
 
           <div class="actions">
@@ -94,6 +103,8 @@
           <div><dt>Golongan / Ruang</dt><dd id="rGolongan"></dd></div>
           <div><dt>Pangkat</dt><dd id="rPangkat"></dd></div>
           <div><dt>Masa Kerja Golongan</dt><dd id="rMasaKerja"></dd></div>
+          <div><dt>Jabatan Fungsional</dt><dd id="rJabfung"></dd></div>
+          <div><dt>Kelas Jabatan</dt><dd id="rKelasJabatan"></dd></div>
         </dl>
         <table class="breakdown">
           <tbody>
@@ -114,7 +125,22 @@
         <p class="note">
           Total ini hanya terdiri atas gaji pokok PNS dan tukin. Tidak termasuk remunerasi BLU,
           tunjangan satker, tunjangan keluarga, tunjangan pangan, maupun potongan (pajak, iuran,
-          dsb).
+          dsb). Untuk dosen bersertifikasi, Perpres No. 19 Tahun 2025 mengatur tukin yang
+          dibayarkan adalah selisih terhadap tunjangan profesi yang sudah diterima — sesuaikan
+          nominal tukin di atas bila berlaku.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Tabel Referensi Tukin Dosen per Jabatan Fungsional</h2>
+        <div class="table-wrap">
+          <table class="ref-table" id="refTukinTable"></table>
+        </div>
+        <p class="note">
+          Sumber: Perpres No. 19 Tahun 2025 tentang Tunjangan Kinerja Dosen ASN (berlaku untuk
+          dosen ASN di PTN Satker dan PTN BLU yang belum menerapkan remunerasi) dan
+          Kepmendiktisaintek No. 447/P/2024 tentang kelas jabatan &amp; besaran tukin jabatan
+          fungsional dosen.
         </p>
       </section>
 

@@ -78,3 +78,48 @@ function getPangkat(golongan) {
 function getGolonganList() {
   return Object.keys(GOLONGAN_DATA);
 }
+
+/**
+ * Data tunjangan kinerja (tukin) dosen ASN berdasarkan jenjang jabatan
+ * fungsional.
+ *
+ * Sumber:
+ * - Peraturan Presiden Nomor 19 Tahun 2025 tentang Tunjangan Kinerja bagi
+ *   Dosen Aparatur Sipil Negara di Lingkungan Kementerian Pendidikan Tinggi,
+ *   Sains, dan Teknologi — berlaku bagi dosen ASN di PTN Satker maupun PTN
+ *   BLU yang belum menerapkan remunerasi (persis kelompok yang dihitung oleh
+ *   aplikasi ini), berlaku surut sejak 1 Januari 2025.
+ * - Keputusan Menteri (Kepmendikbudristek/Kepmendiktisaintek) Nomor 447/P/2024
+ *   tentang Nama Jabatan, Kelas Jabatan, dan Pemberian Besaran Tunjangan
+ *   Kinerja Jabatan Fungsional Dosen — menetapkan kelas jabatan per jenjang
+ *   dan besaran nominal tukin mengikuti tabel kelas jabatan Kemendiktisaintek.
+ *
+ * Catatan penting: nominal berikut adalah tukin PENUH sesuai kelas jabatan.
+ * Untuk dosen bersertifikasi yang telah menerima tunjangan profesi dosen,
+ * Perpres 19/2025 mengatur tukin yang dibayarkan adalah SELISIH antara
+ * nominal berikut dengan tunjangan profesi yang sudah diterima. Aplikasi ini
+ * tidak memotong tunjangan profesi secara otomatis karena bukan bagian dari
+ * input yang diminta — nilai tukin di bawah tetap ditampilkan sebagai isian
+ * yang dapat diedit manual agar sesuai SK/keputusan penetapan tukin masing-
+ * masing dosen.
+ */
+const JABFUNG_TUKIN = {
+  'Asisten Ahli': { kelasJabatan: 9, tukin: 5079200 },
+  Lektor: { kelasJabatan: 11, tukin: 8757600 },
+  'Lektor Kepala': { kelasJabatan: 13, tukin: 10936000 },
+  Profesor: { kelasJabatan: 15, tukin: 19280000 },
+};
+
+function getJabfungList() {
+  return Object.keys(JABFUNG_TUKIN);
+}
+
+function getTukinJabfung(jabfung) {
+  const data = JABFUNG_TUKIN[jabfung];
+  return data ? data.tukin : null;
+}
+
+function getKelasJabatan(jabfung) {
+  const data = JABFUNG_TUKIN[jabfung];
+  return data ? data.kelasJabatan : null;
+}

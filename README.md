@@ -19,12 +19,14 @@ python3 -m http.server 8000
 - NIP (18 digit)
 - Masa Kerja Golongan (tahun)
 - Golongan/Ruang (I/a s.d. IV/e) — Pangkat terisi otomatis
-- Tunjangan Kinerja (Tukin) — diisi manual sesuai SK/kelas jabatan
+- Jabatan Fungsional (Asisten Ahli/Lektor/Lektor Kepala/Profesor) — Tukin acuan terisi otomatis
+- Tunjangan Kinerja (Tukin) — terisi otomatis sesuai jabatan fungsional, dapat diedit manual
+  mengikuti SK penetapan tukin masing-masing dosen
 
 ## Perhitungan
 
 ```
-Total Gaji = Gaji Pokok (golongan + masa kerja) + Tukin
+Total Gaji = Gaji Pokok (golongan + masa kerja) + Tukin (jabatan fungsional)
 ```
 
 Tidak termasuk remunerasi BLU, tunjangan satker, tunjangan keluarga/pangan,
@@ -40,3 +42,20 @@ III/b yang datanya penuh dari sumber resmi, dipakai sebagai acuan validasi
 pola perhitungan). Detail dan disclaimer lengkap ada di komentar berkas
 `data.js` — **cocokkan kembali dengan lampiran resmi PP sebelum dipakai untuk
 pembayaran riil**, karena peraturan dapat direvisi.
+
+## Sumber data tukin jabatan fungsional dosen
+
+Besaran tukin per jenjang jabatan fungsional mengacu pada:
+
+- **Perpres No. 19 Tahun 2025** tentang Tunjangan Kinerja Dosen ASN — berlaku bagi dosen
+  ASN di PTN Satker maupun PTN BLU yang belum menerapkan remunerasi (persis kelompok yang
+  dihitung aplikasi ini), berlaku surut sejak 1 Januari 2025.
+- **Kepmendiktisaintek No. 447/P/2024** tentang kelas jabatan dan besaran tukin jabatan
+  fungsional dosen (Asisten Ahli = kelas 9, Lektor = kelas 11, Lektor Kepala = kelas 13,
+  Profesor = kelas 15).
+
+Nilai yang ditampilkan adalah tukin penuh sesuai kelas jabatan. Untuk dosen bersertifikasi
+yang sudah menerima tunjangan profesi dosen, Perpres 19/2025 mengatur tukin yang dibayarkan
+adalah **selisih** antara nominal tersebut dengan tunjangan profesi yang sudah diterima —
+aplikasi ini tidak memotong tunjangan profesi secara otomatis, sesuaikan nominal tukin secara
+manual bila berlaku.

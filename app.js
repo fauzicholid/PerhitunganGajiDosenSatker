@@ -1,6 +1,7 @@
 (function () {
   const golonganSelect = document.getElementById('golongan');
   const pangkatInput = document.getElementById('pangkat');
+  const jabfungSelect = document.getElementById('jabfung');
   const tukinInput = document.getElementById('tukin');
   const form = document.getElementById('gajiForm');
   const resultCard = document.getElementById('resultCard');
@@ -22,8 +23,23 @@
     pangkatInput.value = getPangkat(golonganSelect.value);
   }
 
+  function populateJabfung() {
+    getJabfungList().forEach((jabfung) => {
+      const option = document.createElement('option');
+      option.value = jabfung;
+      option.textContent = `${jabfung} (Kelas Jabatan ${getKelasJabatan(jabfung)})`;
+      jabfungSelect.appendChild(option);
+    });
+    applyTukinAcuan();
+  }
+
   function digitsOnly(str) {
     return (str || '').replace(/\D/g, '');
+  }
+
+  function applyTukinAcuan() {
+    const tukin = getTukinJabfung(jabfungSelect.value);
+    tukinInput.value = tukin ? tukin.toLocaleString('id-ID') : '';
   }
 
   tukinInput.addEventListener('input', () => {
@@ -32,6 +48,7 @@
   });
 
   golonganSelect.addEventListener('change', updatePangkat);
+  jabfungSelect.addEventListener('change', applyTukinAcuan);
 
   function buildRefTable() {
     const table = document.getElementById('refTable');
@@ -66,6 +83,35 @@
     table.appendChild(tbody);
   }
 
+  function buildRefTukinTable() {
+    const table = document.getElementById('refTukinTable');
+
+    const thead = document.createElement('thead');
+    const headRow = document.createElement('tr');
+    ['Jabatan Fungsional', 'Kelas Jabatan', 'Tukin (Rp)'].forEach((label) => {
+      const th = document.createElement('th');
+      th.textContent = label;
+      headRow.appendChild(th);
+    });
+    thead.appendChild(headRow);
+
+    const tbody = document.createElement('tbody');
+    getJabfungList().forEach((jabfung) => {
+      const row = document.createElement('tr');
+      const tdJabfung = document.createElement('td');
+      tdJabfung.textContent = jabfung;
+      const tdKelas = document.createElement('td');
+      tdKelas.textContent = getKelasJabatan(jabfung);
+      const tdTukin = document.createElement('td');
+      tdTukin.textContent = getTukinJabfung(jabfung).toLocaleString('id-ID');
+      row.append(tdJabfung, tdKelas, tdTukin);
+      tbody.appendChild(row);
+    });
+
+    table.appendChild(thead);
+    table.appendChild(tbody);
+  }
+
   form.addEventListener('submit', (event) => {
     event.preventDefault();
 
@@ -86,6 +132,8 @@
     document.getElementById('rGolongan').textContent = golongan;
     document.getElementById('rPangkat').textContent = pangkat;
     document.getElementById('rMasaKerja').textContent = `${masaKerja} tahun`;
+    document.getElementById('rJabfung').textContent = jabfungSelect.value;
+    document.getElementById('rKelasJabatan').textContent = getKelasJabatan(jabfungSelect.value);
     document.getElementById('rGajiPokok').textContent = rupiah(gajiPokok);
     document.getElementById('rTukin').textContent = rupiah(tukin);
     document.getElementById('rTotal').textContent = rupiah(total);
@@ -96,9 +144,14 @@
 
   form.addEventListener('reset', () => {
     resultCard.hidden = true;
-    setTimeout(updatePangkat, 0);
+    setTimeout(() => {
+      updatePangkat();
+      applyTukinAcuan();
+    }, 0);
   });
 
   populateGolongan();
+  populateJabfung();
   buildRefTable();
+  buildRefTukinTable();
 })();
