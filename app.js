@@ -3,6 +3,9 @@
   const pangkatInput = document.getElementById('pangkat');
   const jabfungSelect = document.getElementById('jabfung');
   const tukinInput = document.getElementById('tukin');
+  const nipInput = document.getElementById('nip');
+  const masaKerjaInput = document.getElementById('masaKerja');
+  const nipHint = document.getElementById('nipHint');
   const form = document.getElementById('gajiForm');
   const resultCard = document.getElementById('resultCard');
 
@@ -49,6 +52,20 @@
 
   golonganSelect.addEventListener('change', updatePangkat);
   jabfungSelect.addEventListener('change', applyTukinAcuan);
+
+  function applyMasaKerjaDariNip() {
+    const nip = nipInput.value.trim();
+    const hasil = getMasaKerjaDariNip(nip);
+    if (!hasil) {
+      nipHint.textContent =
+        'Masa kerja akan otomatis dihitung dari TMT pada digit ke-9–14 NIP.';
+      return;
+    }
+    masaKerjaInput.value = hasil.years;
+    nipHint.textContent = `Terisi otomatis: TMT ${String(hasil.tmtMonth).padStart(2, '0')}/${hasil.tmtYear} → masa kerja ${hasil.years} tahun ${hasil.months} bulan.`;
+  }
+
+  nipInput.addEventListener('input', applyMasaKerjaDariNip);
 
   function buildRefTable() {
     const table = document.getElementById('refTable');
@@ -112,20 +129,53 @@
     table.appendChild(tbody);
   }
 
+  function buildRefUangMakanTable() {
+    const table = document.getElementById('refUangMakanTable');
+
+    const thead = document.createElement('thead');
+    const headRow = document.createElement('tr');
+    ['Golongan', 'Uang Makan / Hari'].forEach((label) => {
+      const th = document.createElement('th');
+      th.textContent = label;
+      headRow.appendChild(th);
+    });
+    thead.appendChild(headRow);
+
+    const tbody = document.createElement('tbody');
+    ['I', 'II', 'III', 'IV'].forEach((golongan) => {
+      const row = document.createElement('tr');
+      const tdGol = document.createElement('td');
+      tdGol.textContent = golongan;
+      const tdRate = document.createElement('td');
+      tdRate.textContent = rupiah(getUangMakanHarian(golongan));
+      row.append(tdGol, tdRate);
+      tbody.appendChild(row);
+    });
+
+    table.appendChild(thead);
+    table.appendChild(tbody);
+  }
+
   form.addEventListener('submit', (event) => {
     event.preventDefault();
 
     const nama = document.getElementById('nama').value.trim();
-    const nip = document.getElementById('nip').value.trim();
-    const masaKerja = Number(document.getElementById('masaKerja').value);
+    const nip = nipInput.value.trim();
+    const masaKerja = Number(masaKerjaInput.value);
     const golongan = golonganSelect.value;
     const pangkat = getPangkat(golongan);
     const tukin = Number(digitsOnly(tukinInput.value)) || 0;
+    const kawin = document.getElementById('statusKawin').value === 'kawin';
+    const jumlahAnak = Number(document.getElementById('jumlahAnak').value) || 0;
+    const hariKerja = Number(document.getElementById('hariKerja').value) || 0;
 
     if (!form.reportValidity()) return;
 
     const gajiPokok = getGajiPokok(golongan, masaKerja);
-    const total = gajiPokok + tukin;
+    const tunjKeluarga = getTunjanganIstriSuami(gajiPokok, kawin);
+    const tunjAnak = getTunjanganAnak(gajiPokok, jumlahAnak);
+    const uangMakan = getUangMakanBulanan(golongan, hariKerja);
+    const total = gajiPokok + tukin + tunjKeluarga + tunjAnak + uangMakan;
 
     document.getElementById('rNama').textContent = nama;
     document.getElementById('rNip').textContent = nip;
@@ -136,6 +186,9 @@
     document.getElementById('rKelasJabatan').textContent = getKelasJabatan(jabfungSelect.value);
     document.getElementById('rGajiPokok').textContent = rupiah(gajiPokok);
     document.getElementById('rTukin').textContent = rupiah(tukin);
+    document.getElementById('rTunjKeluarga').textContent = rupiah(tunjKeluarga);
+    document.getElementById('rTunjAnak').textContent = rupiah(tunjAnak);
+    document.getElementById('rUangMakan').textContent = rupiah(uangMakan);
     document.getElementById('rTotal').textContent = rupiah(total);
 
     resultCard.hidden = false;
@@ -154,4 +207,5 @@
   populateJabfung();
   buildRefTable();
   buildRefTukinTable();
+  buildRefUangMakanTable();
 })();

@@ -16,21 +16,43 @@ python3 -m http.server 8000
 ## Input
 
 - Nama
-- NIP (18 digit)
-- Masa Kerja Golongan (tahun)
+- NIP (18 digit) — masa kerja terisi otomatis dari TMT yang tertanam pada NIP
+- Masa Kerja Golongan (tahun) — dapat disesuaikan manual
 - Golongan/Ruang (I/a s.d. IV/e) — Pangkat terisi otomatis
 - Jabatan Fungsional (Asisten Ahli/Lektor/Lektor Kepala/Profesor) — Tukin acuan terisi otomatis
 - Tunjangan Kinerja (Tukin) — terisi otomatis sesuai jabatan fungsional, dapat diedit manual
   mengikuti SK penetapan tukin masing-masing dosen
+- Status Kawin & Jumlah Anak Tanggungan — untuk tunjangan istri/suami dan anak
+- Hari Kerja Hadir per bulan — untuk uang makan
 
 ## Perhitungan
 
 ```
-Total Gaji = Gaji Pokok (golongan + masa kerja) + Tukin (jabatan fungsional)
+Total Gaji = Gaji Pokok (golongan + masa kerja)
+           + Tukin (jabatan fungsional)
+           + Tunjangan Istri/Suami (10% gaji pokok, jika kawin)
+           + Tunjangan Anak (2% gaji pokok x jumlah anak, maks. 3 anak)
+           + Uang Makan (tarif harian golongan x hari kerja hadir)
 ```
 
-Tidak termasuk remunerasi BLU, tunjangan satker, tunjangan keluarga/pangan,
-maupun potongan (pajak, iuran, dsb).
+Tidak termasuk remunerasi BLU, tunjangan satker, maupun potongan (pajak, iuran, dsb).
+
+## Sumber data masa kerja dari NIP
+
+Struktur NIP 18 digit (Peraturan Kepala BKN No. 3 Tahun 2013): 8 digit tanggal lahir + 6 digit
+TMT CPNS/PNS (YYYYMM) + 1 digit jenis kelamin + 3 digit nomor urut. Masa kerja dihitung dari
+selisih TMT tersebut dengan tanggal hari ini. Ini adalah TMT CPNS/PNS **pertama**, bukan
+otomatis TMT golongan/pangkat terakhir — sesuaikan manual bila pegawai pernah mengalami
+penyesuaian masa kerja saat kenaikan pangkat.
+
+## Sumber data tunjangan keluarga & uang makan
+
+- **Tunjangan keluarga** — PP No. 7 Tahun 1977 tentang Peraturan Gaji PNS beserta perubahannya:
+  istri/suami 10% dari gaji pokok (1 pasangan yang sah), anak 2% dari gaji pokok per anak
+  (maksimal 3 anak kandung/tiri/angkat, usia di bawah 21 tahun atau 25 tahun jika masih
+  bersekolah, belum menikah, dan tidak berpenghasilan sendiri).
+- **Uang makan** — PMK No. 39 Tahun 2024: golongan I & II Rp35.000/hari, golongan III
+  Rp37.000/hari, golongan IV Rp41.000/hari. Dibayarkan per hari kerja dengan kehadiran nyata.
 
 ## Sumber data gaji pokok
 

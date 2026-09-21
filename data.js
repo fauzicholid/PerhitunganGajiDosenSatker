@@ -123,3 +123,83 @@ function getKelasJabatan(jabfung) {
   const data = JABFUNG_TUKIN[jabfung];
   return data ? data.kelasJabatan : null;
 }
+
+/**
+ * Menghitung masa kerja (tahun & bulan) dari NIP PNS 18 digit.
+ *
+ * Struktur NIP (Peraturan Kepala BKN No. 3 Tahun 2013 tentang Pedoman
+ * Penyusunan NIP): 8 digit tanggal lahir (YYYYMMDD) + 6 digit TMT
+ * pengangkatan CPNS/PNS (YYYYMM) + 1 digit kode jenis kelamin (1 = laki-laki,
+ * 2 = perempuan) + 3 digit nomor urut.
+ *
+ * Catatan: hasil ini adalah masa kerja sejak TMT CPNS/PNS pertama yang
+ * tertanam pada NIP, BUKAN otomatis "masa kerja golongan" (MKG) — MKG yang
+ * sebenarnya mengikuti TMT golongan/pangkat terakhir (bisa lebih pendek jika
+ * pernah naik pangkat/golongan dengan penyesuaian masa kerja). Gunakan angka
+ * ini sebagai perkiraan awal dan sesuaikan manual bila berbeda dari SK
+ * kepangkatan terakhir.
+ */
+function getMasaKerjaDariNip(nip, sekarang) {
+  if (!/^\d{18}$/.test(nip)) return null;
+
+  const tmtYear = parseInt(nip.slice(8, 12), 10);
+  const tmtMonth = parseInt(nip.slice(12, 14), 10);
+  if (tmtMonth < 1 || tmtMonth > 12) return null;
+
+  const now = sekarang || new Date();
+  const tmtDate = new Date(tmtYear, tmtMonth - 1, 1);
+  if (tmtDate > now) return null;
+
+  let years = now.getFullYear() - tmtDate.getFullYear();
+  let months = now.getMonth() - tmtDate.getMonth();
+  if (months < 0) {
+    years -= 1;
+    months += 12;
+  }
+
+  return { years, months, tmtYear, tmtMonth };
+}
+
+/**
+ * Tunjangan keluarga PNS (PP No. 7 Tahun 1977 tentang Peraturan Gaji Pegawai
+ * Negeri Sipil beserta perubahannya): tunjangan istri/suami 10% dari gaji
+ * pokok (untuk 1 istri/suami yang sah), tunjangan anak 2% dari gaji pokok
+ * per anak, diberikan untuk sebanyak-banyaknya 3 orang anak (kandung/tiri/
+ * angkat) yang berusia di bawah 21 tahun (dapat diperpanjang sampai 25 tahun
+ * apabila masih bersekolah dan belum menikah/berpenghasilan sendiri).
+ */
+const TUNJANGAN_ISTRI_SUAMI_PERSEN = 0.1;
+const TUNJANGAN_ANAK_PERSEN = 0.02;
+const TUNJANGAN_ANAK_MAKS = 3;
+
+function getTunjanganIstriSuami(gajiPokok, kawin) {
+  return kawin ? Math.round(gajiPokok * TUNJANGAN_ISTRI_SUAMI_PERSEN) : 0;
+}
+
+function getTunjanganAnak(gajiPokok, jumlahAnak) {
+  const anak = Math.max(0, Math.min(TUNJANGAN_ANAK_MAKS, Math.floor(jumlahAnak) || 0));
+  return Math.round(gajiPokok * TUNJANGAN_ANAK_PERSEN * anak);
+}
+
+/**
+ * Tunjangan uang makan PNS berdasarkan golongan, sesuai PMK No. 39 Tahun 2024:
+ * golongan I & II Rp35.000/hari, golongan III Rp37.000/hari, golongan IV
+ * Rp41.000/hari. Diberikan per hari kerja dengan kehadiran nyata (tidak
+ * dibayarkan saat cuti/tidak hadir).
+ */
+const UANG_MAKAN_HARIAN = {
+  I: 35000,
+  II: 35000,
+  III: 37000,
+  IV: 41000,
+};
+
+function getUangMakanHarian(golongan) {
+  const romawi = (golongan || '').split('/')[0];
+  return UANG_MAKAN_HARIAN[romawi] || 0;
+}
+
+function getUangMakanBulanan(golongan, hariKerja) {
+  const hari = Math.max(0, Math.floor(hariKerja) || 0);
+  return getUangMakanHarian(golongan) * hari;
+}

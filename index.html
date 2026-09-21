@@ -11,8 +11,8 @@
     <header class="header">
       <h1>Perhitungan Gaji Dosen BLU Satker</h1>
       <p class="subtitle">
-        Gaji Pokok (sesuai golongan &amp; pangkat PP No. 5 Tahun 2024) + Tunjangan Kinerja (Tukin)
-        &mdash; tanpa remunerasi BLU dan tanpa tunjangan satker.
+        Gaji Pokok (sesuai golongan &amp; pangkat PP No. 5 Tahun 2024) + Tukin + Tunjangan
+        Keluarga + Uang Makan &mdash; tanpa remunerasi BLU dan tanpa tunjangan satker.
       </p>
     </header>
 
@@ -38,6 +38,9 @@
               title="NIP terdiri dari 18 digit angka"
               required
             />
+            <small id="nipHint">
+              Masa kerja akan otomatis dihitung dari TMT pada digit ke-9&ndash;14 NIP.
+            </small>
           </div>
 
           <div class="field">
@@ -52,7 +55,11 @@
               placeholder="0 - 32"
               required
             />
-            <small>Dibulatkan ke bawah ke periode kenaikan gaji berkala (2 tahunan), maksimal 32 tahun.</small>
+            <small>
+              Terisi otomatis dari NIP (TMT CPNS/PNS), dapat disesuaikan manual jika berbeda dari
+              TMT golongan terakhir. Dibulatkan ke bawah ke periode kenaikan gaji berkala
+              (2 tahunan), maksimal 32 tahun.
+            </small>
           </div>
 
           <div class="field">
@@ -88,6 +95,30 @@
             </small>
           </div>
 
+          <div class="field">
+            <label for="statusKawin">Status Kawin</label>
+            <select id="statusKawin" name="statusKawin" required>
+              <option value="tidak">Tidak Kawin</option>
+              <option value="kawin">Kawin</option>
+            </select>
+            <small>Menentukan tunjangan istri/suami (10% gaji pokok).</small>
+          </div>
+
+          <div class="field">
+            <label for="jumlahAnak">Jumlah Anak Tanggungan</label>
+            <input type="number" id="jumlahAnak" name="jumlahAnak" min="0" max="10" step="1" value="0" />
+            <small>
+              Anak kandung/tiri/angkat usia &lt;21 tahun (&lt;25 tahun jika masih sekolah). Dihitung
+              maksimal 3 anak &times; 2% gaji pokok.
+            </small>
+          </div>
+
+          <div class="field">
+            <label for="hariKerja">Hari Kerja Hadir (per bulan, untuk uang makan)</label>
+            <input type="number" id="hariKerja" name="hariKerja" min="0" max="31" step="1" value="22" />
+            <small>Uang makan hanya dibayarkan untuk hari kerja dengan kehadiran nyata (PMK No. 39 Tahun 2024).</small>
+          </div>
+
           <div class="actions">
             <button type="submit">Hitung Gaji</button>
             <button type="reset" class="secondary">Bersihkan</button>
@@ -116,6 +147,18 @@
               <td>Tunjangan Kinerja (Tukin)</td>
               <td class="amount" id="rTukin"></td>
             </tr>
+            <tr>
+              <td>Tunjangan Istri/Suami</td>
+              <td class="amount" id="rTunjKeluarga"></td>
+            </tr>
+            <tr>
+              <td>Tunjangan Anak</td>
+              <td class="amount" id="rTunjAnak"></td>
+            </tr>
+            <tr>
+              <td>Uang Makan</td>
+              <td class="amount" id="rUangMakan"></td>
+            </tr>
             <tr class="total">
               <td>Total Gaji (tanpa remun &amp; tanpa satker)</td>
               <td class="amount" id="rTotal"></td>
@@ -123,11 +166,12 @@
           </tbody>
         </table>
         <p class="note">
-          Total ini hanya terdiri atas gaji pokok PNS dan tukin. Tidak termasuk remunerasi BLU,
-          tunjangan satker, tunjangan keluarga, tunjangan pangan, maupun potongan (pajak, iuran,
+          Total ini terdiri atas gaji pokok PNS, tukin, tunjangan istri/suami &amp; anak, dan uang
+          makan. Tidak termasuk remunerasi BLU, tunjangan satker, maupun potongan (pajak, iuran,
           dsb). Untuk dosen bersertifikasi, Perpres No. 19 Tahun 2025 mengatur tukin yang
           dibayarkan adalah selisih terhadap tunjangan profesi yang sudah diterima — sesuaikan
-          nominal tukin di atas bila berlaku.
+          nominal tukin di atas bila berlaku. Masa kerja hasil hitung dari NIP mengikuti TMT
+          CPNS/PNS pertama, bukan otomatis TMT golongan terakhir.
         </p>
       </section>
 
@@ -141,6 +185,19 @@
           dosen ASN di PTN Satker dan PTN BLU yang belum menerapkan remunerasi) dan
           Kepmendiktisaintek No. 447/P/2024 tentang kelas jabatan &amp; besaran tukin jabatan
           fungsional dosen.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Tabel Referensi Uang Makan &amp; Tunjangan Keluarga</h2>
+        <div class="table-wrap">
+          <table class="ref-table" id="refUangMakanTable"></table>
+        </div>
+        <p class="note">
+          Uang makan (PMK No. 39 Tahun 2024): dibayar per hari kerja dengan kehadiran nyata.
+          Tunjangan keluarga (PP No. 7 Tahun 1977 &amp; perubahannya): istri/suami 10% gaji pokok
+          (1 pasangan), anak 2% gaji pokok per anak (maksimal 3 anak, usia &lt;21 tahun atau
+          &lt;25 tahun jika masih bersekolah).
         </p>
       </section>
 
