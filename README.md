@@ -30,6 +30,8 @@ python3 -m http.server 8000
 ```
 Total Gaji = Gaji Pokok (golongan + masa kerja)
            + Tukin (jabatan fungsional)
+           + Tunjangan Jabatan Fungsional (nominal tetap per jenjang)
+           + Tunjangan Kehormatan Profesor (2x gaji pokok, khusus Guru Besar)
            + Tunjangan Istri/Suami (10% gaji pokok, jika kawin)
            + Tunjangan Anak (2% gaji pokok x jumlah anak, maks. 3 anak)
            + Uang Makan (tarif harian golongan x hari kerja hadir)
@@ -81,3 +83,14 @@ yang sudah menerima tunjangan profesi dosen, Perpres 19/2025 mengatur tukin yang
 adalah **selisih** antara nominal tersebut dengan tunjangan profesi yang sudah diterima —
 aplikasi ini tidak memotong tunjangan profesi secara otomatis, sesuaikan nominal tukin secara
 manual bila berlaku.
+
+## Sumber data tunjangan jabatan fungsional & tunjangan kehormatan profesor
+
+Komponen ini **berbeda dari tukin** di atas dan tetap dibayarkan berdampingan dengannya:
+
+- **Tunjangan Jabatan Fungsional Dosen** — nominal tetap per jenjang sesuai **Perpres No. 65
+  Tahun 2007**: Asisten Ahli Rp375.000, Lektor Rp700.000, Lektor Kepala Rp900.000, Profesor
+  Rp1.350.000. Nominal ini belum mengalami penyesuaian signifikan sejak diterbitkan.
+- **Tunjangan Kehormatan Profesor** — sesuai **PP No. 41 Tahun 2009** tentang Tunjangan Profesi
+  Guru dan Dosen, Tunjangan Khusus Guru dan Dosen, serta Tunjangan Kehormatan Profesor: sebesar
+  2x gaji pokok, khusus untuk jenjang jabatan fungsional Profesor/Guru Besar.

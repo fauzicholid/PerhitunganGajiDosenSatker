@@ -105,7 +105,7 @@
 
     const thead = document.createElement('thead');
     const headRow = document.createElement('tr');
-    ['Jabatan Fungsional', 'Kelas Jabatan', 'Tukin (Rp)'].forEach((label) => {
+    ['Jabatan Fungsional', 'Kelas Jabatan', 'Tukin (Rp)', 'Tunjangan Jabatan Fungsional (Rp)'].forEach((label) => {
       const th = document.createElement('th');
       th.textContent = label;
       headRow.appendChild(th);
@@ -121,7 +121,9 @@
       tdKelas.textContent = getKelasJabatan(jabfung);
       const tdTukin = document.createElement('td');
       tdTukin.textContent = getTukinJabfung(jabfung).toLocaleString('id-ID');
-      row.append(tdJabfung, tdKelas, tdTukin);
+      const tdFungsional = document.createElement('td');
+      tdFungsional.textContent = getTunjanganFungsional(jabfung).toLocaleString('id-ID');
+      row.append(tdJabfung, tdKelas, tdTukin, tdFungsional);
       tbody.appendChild(row);
     });
 
@@ -172,10 +174,13 @@
     if (!form.reportValidity()) return;
 
     const gajiPokok = getGajiPokok(golongan, masaKerja);
+    const tunjFungsional = getTunjanganFungsional(jabfungSelect.value) || 0;
+    const tunjKehormatan = getTunjanganKehormatanProfesor(gajiPokok, jabfungSelect.value);
     const tunjKeluarga = getTunjanganIstriSuami(gajiPokok, kawin);
     const tunjAnak = getTunjanganAnak(gajiPokok, jumlahAnak);
     const uangMakan = getUangMakanBulanan(golongan, hariKerja);
-    const total = gajiPokok + tukin + tunjKeluarga + tunjAnak + uangMakan;
+    const total =
+      gajiPokok + tukin + tunjFungsional + tunjKehormatan + tunjKeluarga + tunjAnak + uangMakan;
 
     document.getElementById('rNama').textContent = nama;
     document.getElementById('rNip').textContent = nip;
@@ -186,6 +191,9 @@
     document.getElementById('rKelasJabatan').textContent = getKelasJabatan(jabfungSelect.value);
     document.getElementById('rGajiPokok').textContent = rupiah(gajiPokok);
     document.getElementById('rTukin').textContent = rupiah(tukin);
+    document.getElementById('rTunjFungsional').textContent = rupiah(tunjFungsional);
+    document.getElementById('rowTunjKehormatan').hidden = tunjKehormatan <= 0;
+    document.getElementById('rTunjKehormatan').textContent = rupiah(tunjKehormatan);
     document.getElementById('rTunjKeluarga').textContent = rupiah(tunjKeluarga);
     document.getElementById('rTunjAnak').textContent = rupiah(tunjAnak);
     document.getElementById('rUangMakan').textContent = rupiah(uangMakan);

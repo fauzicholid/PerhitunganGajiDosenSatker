@@ -104,10 +104,10 @@ function getGolonganList() {
  * masing dosen.
  */
 const JABFUNG_TUKIN = {
-  'Asisten Ahli': { kelasJabatan: 9, tukin: 5079200 },
-  Lektor: { kelasJabatan: 11, tukin: 8757600 },
-  'Lektor Kepala': { kelasJabatan: 13, tukin: 10936000 },
-  Profesor: { kelasJabatan: 15, tukin: 19280000 },
+  'Asisten Ahli': { kelasJabatan: 9, tukin: 5079200, tunjanganFungsional: 375000 },
+  Lektor: { kelasJabatan: 11, tukin: 8757600, tunjanganFungsional: 700000 },
+  'Lektor Kepala': { kelasJabatan: 13, tukin: 10936000, tunjanganFungsional: 900000 },
+  Profesor: { kelasJabatan: 15, tukin: 19280000, tunjanganFungsional: 1350000 },
 };
 
 function getJabfungList() {
@@ -122,6 +122,32 @@ function getTukinJabfung(jabfung) {
 function getKelasJabatan(jabfung) {
   const data = JABFUNG_TUKIN[jabfung];
   return data ? data.kelasJabatan : null;
+}
+
+/**
+ * Tunjangan Jabatan Fungsional Dosen (berbeda dari tukin di atas): nominal
+ * TETAP per jenjang jabatan fungsional, sesuai Peraturan Presiden Nomor 65
+ * Tahun 2007 tentang Tunjangan Jabatan Fungsional Dosen. Belum ada
+ * penyesuaian nominal yang signifikan sejak diterbitkan, dan tetap
+ * dibayarkan berdampingan dengan tukin (komponen penghasilan yang berbeda).
+ */
+function getTunjanganFungsional(jabfung) {
+  const data = JABFUNG_TUKIN[jabfung];
+  return data ? data.tunjanganFungsional : null;
+}
+
+/**
+ * Tunjangan Kehormatan Profesor: 2x gaji pokok, khusus untuk dosen dengan
+ * jenjang jabatan fungsional Profesor/Guru Besar, sesuai PP No. 41 Tahun
+ * 2009 tentang Tunjangan Profesi Guru dan Dosen, Tunjangan Khusus Guru dan
+ * Dosen, serta Tunjangan Kehormatan Profesor.
+ */
+const TUNJANGAN_KEHORMATAN_PROFESOR_KALI_GAJI_POKOK = 2;
+
+function getTunjanganKehormatanProfesor(gajiPokok, jabfung) {
+  return jabfung === 'Profesor'
+    ? gajiPokok * TUNJANGAN_KEHORMATAN_PROFESOR_KALI_GAJI_POKOK
+    : 0;
 }
 
 /**
